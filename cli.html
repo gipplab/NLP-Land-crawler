@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>nlpland.cli API documentation</title>
+<meta name="description" content="This module provides the entry points for the CLI commands." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nlpland.cli</code></h1>
+</header>
+<section id="section-intro">
+<p>This module provides the entry points for the CLI commands.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;This module provides the entry points for the CLI commands.&#34;&#34;&#34;
+import click
+from click.testing import CliRunner
+from dotenv import load_dotenv
+
+import nlpland.data.check as check_
+import nlpland.data.dataset as dataset_
+import nlpland.data.filter as filter_
+import nlpland.modules.count as count_
+import nlpland.modules.scatter as scatter_
+import nlpland.modules.semantic as semantic_
+import nlpland.modules.topic_model as topic_
+from nlpland.constants import (
+    ABSTRACT_SOURCE_ANTHOLOGY,
+    ABSTRACT_SOURCE_RULE,
+    FILTER_DATATYPES,
+)
+
+load_dotenv()
+
+
+@click.group()
+def cli() -&gt; None:
+    &#34;&#34;&#34;Executed before every command.&#34;&#34;&#34;
+
+
+@cli.command()
+@filter_.df_filter_options
+def download(**kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Download the papers that match the given filters.
+
+    Args:
+        **kwargs: Dict of filters to apply to the data before downloading.
+    &#34;&#34;&#34;
+    df_filtered = filter_.get_filtered_df(kwargs)
+    dataset_.download_papers(df_filtered)
+
+
+@cli.command()
+@click.argument(&#34;mode&#34;, type=str)
+@click.option(&#34;--original&#34;, is_flag=True)
+@click.option(&#34;--overwrite-rule&#34;, is_flag=True)  # only overwrites rule based abstracts
+@filter_.df_filter_options
+def extract(mode: str, original: bool, overwrite_rule: bool, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Extract abstracts with the specified method.
+
+    Currently abstracts can be extracted from the ACL Anthology XML files and from the papers PDF
+    files using a rule-based system.
+
+    Args:
+        mode: Determine the extraction method.
+        original: If True, use the original, not expanded dataset.
+        overwrite_rule: If True, overwrites abstracts previously extracted with this function.
+        **kwargs: Dict of filters to apply to the data before the extraction.
+    &#34;&#34;&#34;
+    df_full = dataset_.load_dataset(original)
+
+    modes = [ABSTRACT_SOURCE_RULE, ABSTRACT_SOURCE_ANTHOLOGY]
+    if mode not in modes:
+        print(f&#34;Unsupported mode &#39;{mode}&#39;. Choose from {modes}.&#34;)
+    if mode == ABSTRACT_SOURCE_RULE:
+        df_select = filter_.get_filtered_df(kwargs, original_dataset=original)
+        dataset_.extract_abstracts_rulebased(df_select, df_full, overwrite_rule=overwrite_rule)
+    elif mode == ABSTRACT_SOURCE_ANTHOLOGY:
+        dataset_.extract_abstracts_anthology(df_full)
+
+
+@cli.command()
+def checkencode() -&gt; None:
+    &#34;&#34;&#34;Check the encoding for all extracted abstracts by searching for &#39;�&#39; in the abstracts.&#34;&#34;&#34;
+    df_papers = dataset_.load_dataset(False)
+    check_.check_encoding_issues(df_papers)
+
+
+@cli.command()
+@click.option(&#34;--original&#34;, is_flag=True)
+def checkdataset(original: bool) -&gt; None:
+    &#34;&#34;&#34;Check the dataset and print various useful information about it.
+
+    Args:
+        original: If True, use the original, not expanded dataset.
+    &#34;&#34;&#34;
+    df_papers = dataset_.load_dataset(original)
+    check_.check_dataset(df_papers)
+
+
+@cli.command()
+@click.argument(&#34;paper-path&#34;, type=str)
+def checkpaper(paper_path: str) -&gt; None:
+    &#34;&#34;&#34;Parse a specific paper with tika and print its output.
+
+    Args:
+        paper_path: Filepath of the paper to check.
+    &#34;&#34;&#34;
+    check_.check_paper_parsing(paper_path)
+
+
+@cli.command()
+def countabstractsanth() -&gt; None:
+    &#34;&#34;&#34;Print the amount of abstracts in the ACL Anthology XML files.&#34;&#34;&#34;
+    check_.count_anthology_abstracts()
+
+
+@cli.command()
+@click.argument(&#34;k&#34;, type=int)
+@click.option(&#34;--ngrams&#34;, type=str, default=&#34;1&#34;)
+@filter_.df_filter_options
+def count(k: int, ngrams: str, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Extract the top k token from a dataframe both in regards to tf and tfidf score.
+
+    Args:
+        k: Determines how many tokens we show.
+        ngrams: The lower and upper bound of the n_grams, e.g. &#34;1&#34;, &#34;2&#34;, &#34;1,2&#34; or &#34;1, 3&#34;.
+        **kwargs: Dict of filter to apply to the data before analyzing the data.
+    &#34;&#34;&#34;
+    # works like filters:
+    # leaving both blank: whole dataset (once)
+    # leaving the second blank: only count first one
+    df_filtered = filter_.get_filtered_df(kwargs)
+
+    count_top, tfidf_top = count_.top_k_tokens(k, df_filtered, ngrams)
+    print(f&#34;Most occurring words in selection:\n{count_top}&#34;)
+    print(f&#34;Highest tf-idf scores in selection:\n{tfidf_top}&#34;)
+
+
+@cli.command()
+@click.argument(&#34;k&#34;, type=int)
+@click.option(&#34;-n&#34;, &#34;--name&#34;, type=str)
+@click.option(&#34;--ngrams&#34;, type=str, default=&#34;1&#34;)
+@click.option(&#34;--tfidf&#34;, is_flag=True)
+@filter_.df_filter_options
+def counts_time(k: int, ngrams: str, name: str, tfidf: bool, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Plot the counts of all terms, that were in a top k in at least one year, over time. The time
+    can be selected via the filters.
+
+    Args:
+        k: Determines how many tokens are shown.
+        ngrams: The lower and upper bound of the n_grams, e.g. &#34;1&#34;, &#34;2&#34;, &#34;1,2&#34; or &#34;1, 3&#34;
+        name: Name of the output image.
+        tfidf: If True, will rank by tf-idf not tf scores.
+        **kwargs: Dict of filter to apply to the data before analyzing the data.
+    &#34;&#34;&#34;
+    df_filtered = filter_.get_filtered_df(kwargs)
+    count_.counts_over_time(df_filtered, k, ngrams, name, tfidf, kwargs)  # pylint: disable=R0913
+
+
+@cli.command()
+@click.option(&#34;--fast&#34;, is_flag=True)
+@click.option(&#34;-n&#34;, &#34;--name&#34;, type=str)
+@filter_.df_filter_options
+@filter_.df_filter_options2
+def scatter(fast: bool, name: str, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Plot the word counts using the package scattertext, by comparing two given sets of data.
+
+    Highlight which words were more common in which set of data.
+
+    Args:
+        fast: If True, scattertext will be faster, but less accurate, by using a different model.
+        name: Name of the output HTML file.
+        **kwargs: Dict of filter to apply to the data before analyzing the data.
+    &#34;&#34;&#34;
+    df_y = filter_.get_filtered_df(kwargs)
+    df_x = filter_.get_filtered_df(kwargs, second_df=True)
+
+    scatter_.plot_word_counts(df_y, df_x, fast, name, kwargs)
+
+
+@cli.command()
+@click.argument(&#34;topics&#34;, type=int)
+@click.option(&#34;-n&#34;, &#34;--name&#34;, type=str)
+@filter_.df_filter_options
+def topic_train(topics: int, name: str, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Train a topic model and create an interactive visualization using pyLDAvis.
+
+    Args:
+        topics: The amount of topics to train.
+        name: The name of the model and output HTML file.
+        **kwargs: Dict of filter to apply to the data before analyzing the data.
+    &#34;&#34;&#34;
+    df_filtered = filter_.get_filtered_df(kwargs)
+    topic_.topic(df_filtered, topics, name)
+
+
+@cli.command()
+@click.option(&#34;--train&#34;, is_flag=True)
+@click.option(&#34;-n&#34;, &#34;--name&#34;, type=str)
+@filter_.df_filter_options
+def fasttext(train: bool, name: str, **kwargs: FILTER_DATATYPES) -&gt; None:
+    &#34;&#34;&#34;Train a semantic model using fastText with the given data, save it and evaluate it.
+
+    Additionally evaluate the model with some tests.
+
+    Args:
+        train: If True, retrain the model with the given data.
+        name: Name of the model.
+        **kwargs: Dict of filter to apply to the data before analyzing the data.
+    &#34;&#34;&#34;
+    df_filtered = filter_.get_filtered_df(kwargs)
+    semantic_.semantic(df_filtered, train, name)
+
+
+# @cli.command()
+# @click.option(&#34;--train&#34;, is_flag=True)
+# @filter_.df_filter_options
+# def umap(**kwargs: FILTER_DATATYPES) -&gt; None:
+#     df_filtered = filter_.get_filtered_df(kwargs)
+#     semantic_.plot(df)
+
+
+@cli.command()
+def test() -&gt; None:
+    &#34;&#34;&#34;For testing purposes.&#34;&#34;&#34;
+    # from nlpland.data_cleanup import clean_and_tokenize
+    # test_ = &#34;one two, three.\n four-five, se-\nven, open-\nsource, se-\nve.n, &#34;
+
+    corpus = [
+        &#34;This is the first document.&#34;,
+        &#34;This document is the second document.&#34;,
+        &#34;And this is the third one.&#34;,
+        &#34;Is this the first document?&#34;,
+        &#34;one two, three.\n four-five, se-\nven, open-\nsource, se-\nve.n, &#34;,
+    ]
+    print(corpus)
+    # import nltk
+    # print(nltk.stem.WordNetLemmatizer().lemmatize(&#34;models&#34;))
+
+
+if __name__ == &#34;__main__&#34;:
+    # this is for debugging via IDE
+
+    runner = CliRunner()
+    result = runner.invoke(count, args=[&#34;5&#34;], catch_exceptions=False)
+    # traceback.print_exception(*result.exc_info)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nlpland" href="index.html">nlpland</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

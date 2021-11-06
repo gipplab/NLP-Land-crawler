@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>nlpland.data.dataset API documentation</title>
+<meta name="description" content="This module offers functions to create the dataset (download papers, extract abstracts), save and
+load it." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nlpland.data.dataset</code></h1>
+</header>
+<section id="section-intro">
+<p>This module offers functions to create the dataset (download papers, extract abstracts), save and
+load it.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;This module offers functions to create the dataset (download papers, extract abstracts), save and
+load it.
+&#34;&#34;&#34;
+import os
+import time
+import urllib.error
+import urllib.request
+from collections import defaultdict
+from typing import Dict, List, Tuple
+
+import lxml.etree
+import pandas as pd
+import tika
+from lxml import etree
+from tika import parser
+from tqdm import tqdm
+
+from nlpland.constants import (
+    ABSTRACT_SOURCE_ANTHOLOGY,
+    ABSTRACT_SOURCE_RULE,
+    COLUMN_ABSTRACT,
+    COLUMN_ABSTRACT_SOURCE,
+    END_STRINGS_1,
+    END_STRINGS_2,
+    MISSING_PAPERS,
+    START_STRINGS,
+)
+from nlpland.data.clean import clean_paper_id, clean_venue_name
+
+
+def download_papers(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Download papers given the links in a Dataframe.
+
+    Args:
+        df_papers: Dataframe with the link to the papers and other metadata.
+    &#34;&#34;&#34;
+    path_papers = os.getenv(&#34;PATH_PAPERS&#34;)
+    df_missing = pd.read_csv(MISSING_PAPERS, delimiter=&#34;\t&#34;, low_memory=False, header=None)
+
+    years = sorted(df_papers[&#34;AA year of publication&#34;].unique())
+    for year in years:
+        print(f&#34;Downloading papers from {year}.&#34;)
+        df_year = df_papers[df_papers[&#34;AA year of publication&#34;] == year]
+        for index, row in tqdm(df_year.iterrows(), total=df_year.shape[0]):
+            venue = clean_venue_name(row[&#34;NS venue name&#34;])
+            output_dir = f&#34;{path_papers}/{year}/{venue}&#34;
+            os.makedirs(output_dir, exist_ok=True)
+            filename = clean_paper_id(index)
+            full_path = f&#34;{output_dir}/{filename}.pdf&#34;
+
+            if not os.path.isfile(full_path) and index not in df_missing.iloc[:, [0]].values:
+                url = row[&#34;AA url&#34;]
+                if str.startswith(url, &#34;https://www.aclweb.org/anthology/&#34;):
+                    url = f&#34;{url}.pdf&#34;
+                elif str.startswith(url, &#34;http://yanran.li/&#34;):
+                    pass
+                try:
+                    urllib.request.urlretrieve(url, full_path)
+                except urllib.error.HTTPError:
+                    with open(MISSING_PAPERS, &#34;a+&#34;, encoding=&#34;utf-8&#34;) as file:
+                        file.write(f&#34;{index}\t{url}\n&#34;)
+
+
+def load_dataset(original_dataset: bool) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Load the original unedited dataset or the expanded one.
+
+    Args:
+        original_dataset: If True, load the original dataset, otherwise the expanded one.
+
+    Returns:
+        Dataset as Dataframe.
+    &#34;&#34;&#34;
+    if original_dataset:
+        env_var_name = &#34;PATH_DATASET&#34;
+    else:
+        env_var_name = &#34;PATH_DATASET_EXPANDED&#34;
+
+    return pd.read_csv(
+        os.getenv(env_var_name), delimiter=&#34;\t&#34;, low_memory=False, header=0, index_col=0
+    )
+
+
+def save_dataset(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Save the given dataset:
+
+    This overwrites the expanded dataset, if its already exists.
+
+    Args:
+        df_papers: Dataframe to save.
+    &#34;&#34;&#34;
+    path_dataset_expanded = os.getenv(&#34;PATH_DATASET_EXPANDED&#34;)
+    df_papers.to_csv(path_dataset_expanded, sep=&#34;\t&#34;, na_rep=&#34;NA&#34;)
+
+
+def determine_earliest_string(text: str, possible_strings: List[str]) -&gt; Tuple[int, str]:
+    &#34;&#34;&#34;Determine the earliest occurrence of any of the given list of strings as a substring in
+     another string.
+
+    Args:
+        text: Text to search the substrings in.
+        possible_strings: List of string to search in &#34;text&#34;.
+
+    Returns:
+        Tuple of earliest position of a string and earliest occurring string.
+    &#34;&#34;&#34;
+    earliest_string = &#34;&#34;
+    earliest_pos = -1
+    for possible_string in possible_strings:
+        pos_current = text.find(possible_string)
+        if pos_current != -1 and (earliest_pos == -1 or pos_current &lt; earliest_pos):
+            earliest_pos = pos_current
+            earliest_string = possible_string
+    return earliest_pos, earliest_string
+
+
+def print_results_extract_abstracts_rulebased(
+    count_dict: Dict[str, int], duration: Tuple[int, int, int, int, int, int, int, int, int]
+) -&gt; None:
+    &#34;&#34;&#34;Prints the results of the abstract extraction methods.
+
+    Args:
+        count_dict: Dict containing all counts
+        duration: Duration the procedure took
+    &#34;&#34;&#34;
+    print(f&#34;Papers iterated: {count_dict[&#39;iterated&#39;]} matching filters&#34;)
+    print(f&#34;Abstracts searched: {count_dict[&#39;searched&#39;]} abstracts searched&#34;)
+    print(f&#34;Abstracts skipped: {count_dict[&#39;skipped&#39;]} already existed&#34;)
+    print(f&#34;none: {count_dict[&#39;nones&#39;]} texts of papers are None&#34;)
+    print(f&#34;index: {count_dict[&#39;index_err&#39;]} abstracts not found&#34;)
+    print(f&#34;no_file: {count_dict[&#39;no_file&#39;]} papers not downloaded&#34;)
+    print(f&#34;long_abstract: {count_dict[&#39;long_abstracts&#39;]} papers with (too) long abstracts&#34;)
+    print(f&#34;This took {time.strftime(&#39;%Mm %Ss&#39;, duration)}.&#34;)
+
+
+def helper_abstracts_rulebased(
+    index: str, count_dict: Dict[str, int], path_papers: str, df_full: pd.DataFrame
+) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Helper function for the abstract extraction method.
+
+    Args:
+        index: The current index.
+        count_dict: Dict to count everything
+        path_papers: Path to the downloaded papers.
+        df_full: Dataframe containing all relevant information for extraction
+
+    Returns:
+        Tuple of earliest position of a string and earliest occurring string.
+    &#34;&#34;&#34;
+    paper_id = clean_paper_id(index)
+    venue = clean_venue_name(df_full.at[index, &#34;NS venue name&#34;])
+    year = df_full.at[index, &#34;AA year of publication&#34;]
+
+    full_path = f&#34;{path_papers}/{year}/{venue}/{paper_id}.pdf&#34;
+
+    if os.path.isfile(full_path):
+        count_dict[&#34;searched&#34;] += 1
+
+        text: str = parser.from_file(full_path)[&#34;content&#34;]
+
+        if text is None:
+            count_dict[&#34;nones&#34;] += 1
+        else:
+            start_pos, start_string = determine_earliest_string(text, START_STRINGS)
+            start_pos += len(start_string)
+
+            end_pos, end_string = determine_earliest_string(text, END_STRINGS_1)
+            if end_pos == -1:
+                for end_string in END_STRINGS_2:
+                    end_pos = text.find(end_string, start_pos)
+                    if end_pos != -1:
+                        break
+
+            # if row[&#34;NS venue name&#34;] == &#34;CL&#34;:
+            #     end_string = &#34;\n\n1. Introduction&#34;
+            #     end_pos = text.find(end_string)
+            #     start_string = &#34;\n\n&#34;
+            #     start_pos = text.rfind(&#34;\n\n&#34;, 0, end_pos)
+
+            if end_pos == -1 or start_pos == -1:
+                count_dict[&#34;index_err&#34;] += 1
+            else:
+                abstract = text[start_pos:end_pos]  # pylint: disable=E1136
+                df_full.at[index, COLUMN_ABSTRACT] = abstract
+                df_full.at[index, COLUMN_ABSTRACT_SOURCE] = ABSTRACT_SOURCE_RULE
+                if len(abstract) &gt; 5000:
+                    count_dict[&#34;long_abstract&#34;] += 1
+    else:
+        count_dict[&#34;no_file&#34;] += 1
+
+    return df_full
+
+
+def extract_abstracts_rulebased(
+    df_select: pd.DataFrame, df_full: pd.DataFrame, overwrite_rule: bool = False
+) -&gt; None:
+    &#34;&#34;&#34;Extract the abstract of papers from PDF files based on a defined set of rules.
+
+    This function will never overwrite abstracts extracted from the anthology itself. It can be set
+    to overwrite abstracts previously extracted with this rule-based system/function that are also
+    in the selection &#34;df_select&#34;.
+
+    Args:
+        df_select: The dataset of papers to extract abstract from.
+        df_full: The full dataset of papers for statistical purposes.
+        overwrite_rule: If True, overwrites abstracts previously extracted with this function.
+    &#34;&#34;&#34;
+    start = time.time()
+    count_dict: dict = defaultdict(int)
+
+    path_papers = os.getenv(&#34;PATH_PAPERS&#34;, default=&#34;&#34;)
+    tika.initVM()
+
+    for index, row in tqdm(df_select.iterrows(), total=df_select.shape[0]):
+        count_dict[&#34;iterated&#34;] += 1
+        if (overwrite_rule and row[COLUMN_ABSTRACT_SOURCE] == ABSTRACT_SOURCE_RULE) or pd.isnull(
+            row[COLUMN_ABSTRACT]
+        ):
+            df_full = helper_abstracts_rulebased(index, count_dict, path_papers, df_full)
+        else:
+            count_dict[&#34;skipped&#34;] += 1
+        if count_dict[&#34;iterated&#34;] % 1000 == 0 and count_dict[&#34;iterated&#34;] &gt; 0:
+            save_dataset(df_full)
+    save_dataset(df_full)
+    duration = time.gmtime(time.time() - start)
+    print_results_extract_abstracts_rulebased(count_dict, duration)
+
+
+def helper_abstracts_anthology(
+    volume: lxml.etree.Element,
+    df_papers: pd.DataFrame,
+    counter_dict: Dict[str, int],
+    collection_id: str,
+    volume_id: str,
+) -&gt; Tuple[Dict[str, int], pd.DataFrame]:
+    &#34;&#34;&#34;Extract the abstract of papers from PDF files based on a defined set of rules.
+
+    This function will never overwrite abstracts extracted from the anthology itself. It can be set
+    to overwrite abstracts previously extracted with this rule-based system/function that are also
+    in the selection &#34;df_select&#34;.
+
+    Args:
+        volume: The current volume.
+        df_papers: The full dataset of papers for statistical purposes.
+        counter_dict: The count dict for all counts.
+        collection_id: The current collection id.
+        volume_id: The current volume id.
+
+    Returns:
+        Filled counter_dict.
+        Filled dataframe with papers.
+    &#34;&#34;&#34;
+    for paper in volume.iter(&#34;paper&#34;):
+        children = paper.getchildren()
+        paper_id = None
+        abstract = None
+        for child in children:
+            if child.tag == &#34;url&#34;:
+                if &#34;http&#34; not in child.text:
+                    paper_id = child.text
+            if child.tag == &#34;abstract&#34;:
+                if child.text is not None:
+                    abstract = str(child.xpath(&#34;string()&#34;))
+        if paper_id is None:
+            paper_id = paper.attrib[&#34;id&#34;]
+            paper_id = f&#34;{collection_id}-{volume_id}-{paper_id}&#34;
+
+        if paper_id is not None and abstract is not None:
+            if paper_id in df_papers.index:
+                df_papers.at[paper_id, COLUMN_ABSTRACT] = abstract
+                df_papers.at[paper_id, COLUMN_ABSTRACT_SOURCE] = ABSTRACT_SOURCE_ANTHOLOGY
+                counter_dict[&#34;abstracts&#34;] += 1
+            else:
+                counter_dict[&#34;unknown_id&#34;] += 1
+        else:
+            counter_dict[&#34;no_id_abstract&#34;] += 1
+
+    return counter_dict, df_papers
+
+
+def extract_abstracts_anthology(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Extract abstract from the ACL Anthology XML files.
+
+    This always overwrites the abstracts for all papers which have an abstract in the XML files.
+
+    Args:
+        df_papers: Dataframe of the papers to match the entries in the XML files against.
+    &#34;&#34;&#34;
+    start = time.time()
+    count_dict: dict = defaultdict(int)
+    path_anthology = os.getenv(&#34;PATH_ANTHOLOGY&#34;)
+    for file in tqdm(os.listdir(path_anthology), total=len(os.listdir(path_anthology))):
+        assert file is not None
+        if file.endswith(&#34;.xml&#34;):
+            tree = etree.parse(  # pylint: disable=I1101
+                os.path.join(path_anthology, file)  # type: ignore
+            )
+            for collection in tree.iter(&#34;collection&#34;):
+                collection_id = collection.attrib[&#34;id&#34;]
+                for volume in collection.iter(&#34;volume&#34;):
+                    if len(volume.attrib) &gt; 0:
+                        volume_id = volume.attrib[&#34;id&#34;]
+                        count_dict, df_papers = helper_abstracts_anthology(
+                            volume, df_papers, count_dict, collection_id, volume_id
+                        )
+    save_dataset(df_papers)
+    print(f&#34;Abstracts added/overwritten: {count_dict[&#39;abstracts&#39;]}&#34;)
+    duration = time.gmtime(time.time() - start)
+    print(f&#34;This took {time.strftime(&#39;%Mm %Ss&#39;, duration)}.&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="nlpland.data.dataset.determine_earliest_string"><code class="name flex">
+<span>def <span class="ident">determine_earliest_string</span></span>(<span>text: str, possible_strings: List[str]) ‑> Tuple[int, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Determine the earliest occurrence of any of the given list of strings as a substring in
+another string.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>text</code></strong></dt>
+<dd>Text to search the substrings in.</dd>
+<dt><strong><code>possible_strings</code></strong></dt>
+<dd>List of string to search in "text".</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Tuple of earliest position of a string and earliest occurring string.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def determine_earliest_string(text: str, possible_strings: List[str]) -&gt; Tuple[int, str]:
+    &#34;&#34;&#34;Determine the earliest occurrence of any of the given list of strings as a substring in
+     another string.
+
+    Args:
+        text: Text to search the substrings in.
+        possible_strings: List of string to search in &#34;text&#34;.
+
+    Returns:
+        Tuple of earliest position of a string and earliest occurring string.
+    &#34;&#34;&#34;
+    earliest_string = &#34;&#34;
+    earliest_pos = -1
+    for possible_string in possible_strings:
+        pos_current = text.find(possible_string)
+        if pos_current != -1 and (earliest_pos == -1 or pos_current &lt; earliest_pos):
+            earliest_pos = pos_current
+            earliest_string = possible_string
+    return earliest_pos, earliest_string</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.download_papers"><code class="name flex">
+<span>def <span class="ident">download_papers</span></span>(<span>df_papers: pandas.core.frame.DataFrame) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Download papers given the links in a Dataframe.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>df_papers</code></strong></dt>
+<dd>Dataframe with the link to the papers and other metadata.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_papers(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Download papers given the links in a Dataframe.
+
+    Args:
+        df_papers: Dataframe with the link to the papers and other metadata.
+    &#34;&#34;&#34;
+    path_papers = os.getenv(&#34;PATH_PAPERS&#34;)
+    df_missing = pd.read_csv(MISSING_PAPERS, delimiter=&#34;\t&#34;, low_memory=False, header=None)
+
+    years = sorted(df_papers[&#34;AA year of publication&#34;].unique())
+    for year in years:
+        print(f&#34;Downloading papers from {year}.&#34;)
+        df_year = df_papers[df_papers[&#34;AA year of publication&#34;] == year]
+        for index, row in tqdm(df_year.iterrows(), total=df_year.shape[0]):
+            venue = clean_venue_name(row[&#34;NS venue name&#34;])
+            output_dir = f&#34;{path_papers}/{year}/{venue}&#34;
+            os.makedirs(output_dir, exist_ok=True)
+            filename = clean_paper_id(index)
+            full_path = f&#34;{output_dir}/{filename}.pdf&#34;
+
+            if not os.path.isfile(full_path) and index not in df_missing.iloc[:, [0]].values:
+                url = row[&#34;AA url&#34;]
+                if str.startswith(url, &#34;https://www.aclweb.org/anthology/&#34;):
+                    url = f&#34;{url}.pdf&#34;
+                elif str.startswith(url, &#34;http://yanran.li/&#34;):
+                    pass
+                try:
+                    urllib.request.urlretrieve(url, full_path)
+                except urllib.error.HTTPError:
+                    with open(MISSING_PAPERS, &#34;a+&#34;, encoding=&#34;utf-8&#34;) as file:
+                        file.write(f&#34;{index}\t{url}\n&#34;)</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.extract_abstracts_anthology"><code class="name flex">
+<span>def <span class="ident">extract_abstracts_anthology</span></span>(<span>df_papers: pandas.core.frame.DataFrame) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract abstract from the ACL Anthology XML files.</p>
+<p>This always overwrites the abstracts for all papers which have an abstract in the XML files.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>df_papers</code></strong></dt>
+<dd>Dataframe of the papers to match the entries in the XML files against.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_abstracts_anthology(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Extract abstract from the ACL Anthology XML files.
+
+    This always overwrites the abstracts for all papers which have an abstract in the XML files.
+
+    Args:
+        df_papers: Dataframe of the papers to match the entries in the XML files against.
+    &#34;&#34;&#34;
+    start = time.time()
+    count_dict: dict = defaultdict(int)
+    path_anthology = os.getenv(&#34;PATH_ANTHOLOGY&#34;)
+    for file in tqdm(os.listdir(path_anthology), total=len(os.listdir(path_anthology))):
+        assert file is not None
+        if file.endswith(&#34;.xml&#34;):
+            tree = etree.parse(  # pylint: disable=I1101
+                os.path.join(path_anthology, file)  # type: ignore
+            )
+            for collection in tree.iter(&#34;collection&#34;):
+                collection_id = collection.attrib[&#34;id&#34;]
+                for volume in collection.iter(&#34;volume&#34;):
+                    if len(volume.attrib) &gt; 0:
+                        volume_id = volume.attrib[&#34;id&#34;]
+                        count_dict, df_papers = helper_abstracts_anthology(
+                            volume, df_papers, count_dict, collection_id, volume_id
+                        )
+    save_dataset(df_papers)
+    print(f&#34;Abstracts added/overwritten: {count_dict[&#39;abstracts&#39;]}&#34;)
+    duration = time.gmtime(time.time() - start)
+    print(f&#34;This took {time.strftime(&#39;%Mm %Ss&#39;, duration)}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.extract_abstracts_rulebased"><code class="name flex">
+<span>def <span class="ident">extract_abstracts_rulebased</span></span>(<span>df_select: pandas.core.frame.DataFrame, df_full: pandas.core.frame.DataFrame, overwrite_rule: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the abstract of papers from PDF files based on a defined set of rules.</p>
+<p>This function will never overwrite abstracts extracted from the anthology itself. It can be set
+to overwrite abstracts previously extracted with this rule-based system/function that are also
+in the selection "df_select".</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>df_select</code></strong></dt>
+<dd>The dataset of papers to extract abstract from.</dd>
+<dt><strong><code>df_full</code></strong></dt>
+<dd>The full dataset of papers for statistical purposes.</dd>
+<dt><strong><code>overwrite_rule</code></strong></dt>
+<dd>If True, overwrites abstracts previously extracted with this function.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_abstracts_rulebased(
+    df_select: pd.DataFrame, df_full: pd.DataFrame, overwrite_rule: bool = False
+) -&gt; None:
+    &#34;&#34;&#34;Extract the abstract of papers from PDF files based on a defined set of rules.
+
+    This function will never overwrite abstracts extracted from the anthology itself. It can be set
+    to overwrite abstracts previously extracted with this rule-based system/function that are also
+    in the selection &#34;df_select&#34;.
+
+    Args:
+        df_select: The dataset of papers to extract abstract from.
+        df_full: The full dataset of papers for statistical purposes.
+        overwrite_rule: If True, overwrites abstracts previously extracted with this function.
+    &#34;&#34;&#34;
+    start = time.time()
+    count_dict: dict = defaultdict(int)
+
+    path_papers = os.getenv(&#34;PATH_PAPERS&#34;, default=&#34;&#34;)
+    tika.initVM()
+
+    for index, row in tqdm(df_select.iterrows(), total=df_select.shape[0]):
+        count_dict[&#34;iterated&#34;] += 1
+        if (overwrite_rule and row[COLUMN_ABSTRACT_SOURCE] == ABSTRACT_SOURCE_RULE) or pd.isnull(
+            row[COLUMN_ABSTRACT]
+        ):
+            df_full = helper_abstracts_rulebased(index, count_dict, path_papers, df_full)
+        else:
+            count_dict[&#34;skipped&#34;] += 1
+        if count_dict[&#34;iterated&#34;] % 1000 == 0 and count_dict[&#34;iterated&#34;] &gt; 0:
+            save_dataset(df_full)
+    save_dataset(df_full)
+    duration = time.gmtime(time.time() - start)
+    print_results_extract_abstracts_rulebased(count_dict, duration)</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.helper_abstracts_anthology"><code class="name flex">
+<span>def <span class="ident">helper_abstracts_anthology</span></span>(<span>volume: <cyfunction Element at 0x7fe2c6609a10>, df_papers: pandas.core.frame.DataFrame, counter_dict: Dict[str, int], collection_id: str, volume_id: str) ‑> Tuple[Dict[str, int], pandas.core.frame.DataFrame]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract the abstract of papers from PDF files based on a defined set of rules.</p>
+<p>This function will never overwrite abstracts extracted from the anthology itself. It can be set
+to overwrite abstracts previously extracted with this rule-based system/function that are also
+in the selection "df_select".</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>volume</code></strong></dt>
+<dd>The current volume.</dd>
+<dt><strong><code>df_papers</code></strong></dt>
+<dd>The full dataset of papers for statistical purposes.</dd>
+<dt><strong><code>counter_dict</code></strong></dt>
+<dd>The count dict for all counts.</dd>
+<dt><strong><code>collection_id</code></strong></dt>
+<dd>The current collection id.</dd>
+<dt><strong><code>volume_id</code></strong></dt>
+<dd>The current volume id.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Filled counter_dict.
+Filled dataframe with papers.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def helper_abstracts_anthology(
+    volume: lxml.etree.Element,
+    df_papers: pd.DataFrame,
+    counter_dict: Dict[str, int],
+    collection_id: str,
+    volume_id: str,
+) -&gt; Tuple[Dict[str, int], pd.DataFrame]:
+    &#34;&#34;&#34;Extract the abstract of papers from PDF files based on a defined set of rules.
+
+    This function will never overwrite abstracts extracted from the anthology itself. It can be set
+    to overwrite abstracts previously extracted with this rule-based system/function that are also
+    in the selection &#34;df_select&#34;.
+
+    Args:
+        volume: The current volume.
+        df_papers: The full dataset of papers for statistical purposes.
+        counter_dict: The count dict for all counts.
+        collection_id: The current collection id.
+        volume_id: The current volume id.
+
+    Returns:
+        Filled counter_dict.
+        Filled dataframe with papers.
+    &#34;&#34;&#34;
+    for paper in volume.iter(&#34;paper&#34;):
+        children = paper.getchildren()
+        paper_id = None
+        abstract = None
+        for child in children:
+            if child.tag == &#34;url&#34;:
+                if &#34;http&#34; not in child.text:
+                    paper_id = child.text
+            if child.tag == &#34;abstract&#34;:
+                if child.text is not None:
+                    abstract = str(child.xpath(&#34;string()&#34;))
+        if paper_id is None:
+            paper_id = paper.attrib[&#34;id&#34;]
+            paper_id = f&#34;{collection_id}-{volume_id}-{paper_id}&#34;
+
+        if paper_id is not None and abstract is not None:
+            if paper_id in df_papers.index:
+                df_papers.at[paper_id, COLUMN_ABSTRACT] = abstract
+                df_papers.at[paper_id, COLUMN_ABSTRACT_SOURCE] = ABSTRACT_SOURCE_ANTHOLOGY
+                counter_dict[&#34;abstracts&#34;] += 1
+            else:
+                counter_dict[&#34;unknown_id&#34;] += 1
+        else:
+            counter_dict[&#34;no_id_abstract&#34;] += 1
+
+    return counter_dict, df_papers</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.helper_abstracts_rulebased"><code class="name flex">
+<span>def <span class="ident">helper_abstracts_rulebased</span></span>(<span>index: str, count_dict: Dict[str, int], path_papers: str, df_full: pandas.core.frame.DataFrame) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper function for the abstract extraction method.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>index</code></strong></dt>
+<dd>The current index.</dd>
+<dt><strong><code>count_dict</code></strong></dt>
+<dd>Dict to count everything</dd>
+<dt><strong><code>path_papers</code></strong></dt>
+<dd>Path to the downloaded papers.</dd>
+<dt><strong><code>df_full</code></strong></dt>
+<dd>Dataframe containing all relevant information for extraction</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Tuple of earliest position of a string and earliest occurring string.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def helper_abstracts_rulebased(
+    index: str, count_dict: Dict[str, int], path_papers: str, df_full: pd.DataFrame
+) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Helper function for the abstract extraction method.
+
+    Args:
+        index: The current index.
+        count_dict: Dict to count everything
+        path_papers: Path to the downloaded papers.
+        df_full: Dataframe containing all relevant information for extraction
+
+    Returns:
+        Tuple of earliest position of a string and earliest occurring string.
+    &#34;&#34;&#34;
+    paper_id = clean_paper_id(index)
+    venue = clean_venue_name(df_full.at[index, &#34;NS venue name&#34;])
+    year = df_full.at[index, &#34;AA year of publication&#34;]
+
+    full_path = f&#34;{path_papers}/{year}/{venue}/{paper_id}.pdf&#34;
+
+    if os.path.isfile(full_path):
+        count_dict[&#34;searched&#34;] += 1
+
+        text: str = parser.from_file(full_path)[&#34;content&#34;]
+
+        if text is None:
+            count_dict[&#34;nones&#34;] += 1
+        else:
+            start_pos, start_string = determine_earliest_string(text, START_STRINGS)
+            start_pos += len(start_string)
+
+            end_pos, end_string = determine_earliest_string(text, END_STRINGS_1)
+            if end_pos == -1:
+                for end_string in END_STRINGS_2:
+                    end_pos = text.find(end_string, start_pos)
+                    if end_pos != -1:
+                        break
+
+            # if row[&#34;NS venue name&#34;] == &#34;CL&#34;:
+            #     end_string = &#34;\n\n1. Introduction&#34;
+            #     end_pos = text.find(end_string)
+            #     start_string = &#34;\n\n&#34;
+            #     start_pos = text.rfind(&#34;\n\n&#34;, 0, end_pos)
+
+            if end_pos == -1 or start_pos == -1:
+                count_dict[&#34;index_err&#34;] += 1
+            else:
+                abstract = text[start_pos:end_pos]  # pylint: disable=E1136
+                df_full.at[index, COLUMN_ABSTRACT] = abstract
+                df_full.at[index, COLUMN_ABSTRACT_SOURCE] = ABSTRACT_SOURCE_RULE
+                if len(abstract) &gt; 5000:
+                    count_dict[&#34;long_abstract&#34;] += 1
+    else:
+        count_dict[&#34;no_file&#34;] += 1
+
+    return df_full</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.load_dataset"><code class="name flex">
+<span>def <span class="ident">load_dataset</span></span>(<span>original_dataset: bool) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load the original unedited dataset or the expanded one.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>original_dataset</code></strong></dt>
+<dd>If True, load the original dataset, otherwise the expanded one.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Dataset as Dataframe.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_dataset(original_dataset: bool) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Load the original unedited dataset or the expanded one.
+
+    Args:
+        original_dataset: If True, load the original dataset, otherwise the expanded one.
+
+    Returns:
+        Dataset as Dataframe.
+    &#34;&#34;&#34;
+    if original_dataset:
+        env_var_name = &#34;PATH_DATASET&#34;
+    else:
+        env_var_name = &#34;PATH_DATASET_EXPANDED&#34;
+
+    return pd.read_csv(
+        os.getenv(env_var_name), delimiter=&#34;\t&#34;, low_memory=False, header=0, index_col=0
+    )</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.print_results_extract_abstracts_rulebased"><code class="name flex">
+<span>def <span class="ident">print_results_extract_abstracts_rulebased</span></span>(<span>count_dict: Dict[str, int], duration: Tuple[int, int, int, int, int, int, int, int, int]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prints the results of the abstract extraction methods.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>count_dict</code></strong></dt>
+<dd>Dict containing all counts</dd>
+<dt><strong><code>duration</code></strong></dt>
+<dd>Duration the procedure took</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_results_extract_abstracts_rulebased(
+    count_dict: Dict[str, int], duration: Tuple[int, int, int, int, int, int, int, int, int]
+) -&gt; None:
+    &#34;&#34;&#34;Prints the results of the abstract extraction methods.
+
+    Args:
+        count_dict: Dict containing all counts
+        duration: Duration the procedure took
+    &#34;&#34;&#34;
+    print(f&#34;Papers iterated: {count_dict[&#39;iterated&#39;]} matching filters&#34;)
+    print(f&#34;Abstracts searched: {count_dict[&#39;searched&#39;]} abstracts searched&#34;)
+    print(f&#34;Abstracts skipped: {count_dict[&#39;skipped&#39;]} already existed&#34;)
+    print(f&#34;none: {count_dict[&#39;nones&#39;]} texts of papers are None&#34;)
+    print(f&#34;index: {count_dict[&#39;index_err&#39;]} abstracts not found&#34;)
+    print(f&#34;no_file: {count_dict[&#39;no_file&#39;]} papers not downloaded&#34;)
+    print(f&#34;long_abstract: {count_dict[&#39;long_abstracts&#39;]} papers with (too) long abstracts&#34;)
+    print(f&#34;This took {time.strftime(&#39;%Mm %Ss&#39;, duration)}.&#34;)</code></pre>
+</details>
+</dd>
+<dt id="nlpland.data.dataset.save_dataset"><code class="name flex">
+<span>def <span class="ident">save_dataset</span></span>(<span>df_papers: pandas.core.frame.DataFrame) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save the given dataset:</p>
+<p>This overwrites the expanded dataset, if its already exists.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>df_papers</code></strong></dt>
+<dd>Dataframe to save.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_dataset(df_papers: pd.DataFrame) -&gt; None:
+    &#34;&#34;&#34;Save the given dataset:
+
+    This overwrites the expanded dataset, if its already exists.
+
+    Args:
+        df_papers: Dataframe to save.
+    &#34;&#34;&#34;
+    path_dataset_expanded = os.getenv(&#34;PATH_DATASET_EXPANDED&#34;)
+    df_papers.to_csv(path_dataset_expanded, sep=&#34;\t&#34;, na_rep=&#34;NA&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nlpland.data" href="index.html">nlpland.data</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="nlpland.data.dataset.determine_earliest_string" href="#nlpland.data.dataset.determine_earliest_string">determine_earliest_string</a></code></li>
+<li><code><a title="nlpland.data.dataset.download_papers" href="#nlpland.data.dataset.download_papers">download_papers</a></code></li>
+<li><code><a title="nlpland.data.dataset.extract_abstracts_anthology" href="#nlpland.data.dataset.extract_abstracts_anthology">extract_abstracts_anthology</a></code></li>
+<li><code><a title="nlpland.data.dataset.extract_abstracts_rulebased" href="#nlpland.data.dataset.extract_abstracts_rulebased">extract_abstracts_rulebased</a></code></li>
+<li><code><a title="nlpland.data.dataset.helper_abstracts_anthology" href="#nlpland.data.dataset.helper_abstracts_anthology">helper_abstracts_anthology</a></code></li>
+<li><code><a title="nlpland.data.dataset.helper_abstracts_rulebased" href="#nlpland.data.dataset.helper_abstracts_rulebased">helper_abstracts_rulebased</a></code></li>
+<li><code><a title="nlpland.data.dataset.load_dataset" href="#nlpland.data.dataset.load_dataset">load_dataset</a></code></li>
+<li><code><a title="nlpland.data.dataset.print_results_extract_abstracts_rulebased" href="#nlpland.data.dataset.print_results_extract_abstracts_rulebased">print_results_extract_abstracts_rulebased</a></code></li>
+<li><code><a title="nlpland.data.dataset.save_dataset" href="#nlpland.data.dataset.save_dataset">save_dataset</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
