@@ -186,7 +186,19 @@ def semantic(df_abstracts: pd.DataFrame, train: bool, name: str) -&gt; None:
     print(model.wv.similarity(&#34;computer&#34;, &#34;processor&#34;))
     print(model.wv.similarity(&#34;neural&#34;, &#34;network&#34;))
     print(model.wv.similarity(&#34;cnn&#34;, &#34;rnn&#34;))
-    print(model.wv.similarity(&#34;english&#34;, &#34;language&#34;))</code></pre>
+    print(model.wv.similarity(&#34;english&#34;, &#34;language&#34;))
+
+    # print()
+
+    # print(model.wv.similar_by_word(&#34;human&#34;))
+    # print(model.wv.similar_by_word(&#34;computer&#34;))
+    # print(model.wv.similar_by_word(&#34;network&#34;))
+    # print(model.wv.similar_by_word(&#34;neural network&#34;))
+    # print(model.wv.similar_by_word(&#34;neural-network&#34;))
+    # print(model.wv.similar_by_word(&#34;ai&#34;))
+    # print(model.wv.similar_by_word(&#34;foreign language&#34;))
+    # print(model.wv.similar_by_word(&#34;foreign-language&#34;))
+    # print(model.wv.similar_by_word(&#34;translation&#34;))</code></pre>
 </details>
 </dd>
 </dl>
