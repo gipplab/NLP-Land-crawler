@@ -8,6 +8,8 @@ import time
 from datetime import datetime
 import numpy as np
 import os
+import random
+from tqdm import tqdm
 
 
 token = open(".env").read()
@@ -107,20 +109,79 @@ def post_authors(df):
     post(df, "authors", 2)
 
 
+def map_name_to_id(df, col_name):
+    df = df[["_id", col_name]].copy()
+    df[col_name] = df[col_name].fillna('["unknown"]').apply(lambda x: ast.literal_eval(x)[0])
+    return dict(zip(df[col_name], df["_id"]))
+
+
+def update_papers(df_data, df_papers, df_venues, df_authors):
+    rows = df_papers.shape[0]
+    df_data = df_data.iloc[0:rows].copy()
+
+    # update citations
+    df_data["cites"] = df_data["inCitations"].fillna(0).apply(lambda x: x if (x == 0) else len(ast.literal_eval(x)))
+    # dict_c = dict(zip(df_data["_id"], df_data["cites"]))
+
+    # map venues
+    df_venues = df_venues[["_id", "names"]].copy()
+    df_venues["names"] = df_venues["names"].fillna('["unknown"]').apply(lambda x: ast.literal_eval(x)[0])
+    dict_v = dict(zip(df_venues["names"], df_venues["_id"]))
+
+    # map authors
+    df_authors = df_authors[["_id", "fullname"]].copy()
+    df_authors["fullname"] = df_authors["fullname"].fillna('"unknown"')
+    dict_a = dict(zip(df_authors["fullname"], df_authors["_id"]))
+    # print(dict_a)
+
+    rows = df_papers.shape[0]
+    for paper in tqdm(df_papers.iterrows(), total=rows):  # vectorized might be faster, but we have to sleep (wait for the server) at the end, so all improvement is lost anyway
+        index = paper[0]
+        id = paper[1]["_id"]
+        data = {}
+
+        # add random cites (correct amount)
+        cites = df_data.loc[index, "cites"]
+        if int(cites) > 0:
+            index_list = random.sample(range(0, rows), cites)
+
+            df_tmp = df_papers.iloc[index_list]
+            data["cites"] = list(df_tmp["_id"])
+
+        # add venue
+        venues = dict_v[df_data.loc[index, "venue"]]
+        data["venues"] = [venues]
+
+        # add authors
+        authors = []
+        for author in ast.literal_eval(df_data.loc[index, "authors"]):
+            authors.append(dict_a[author["name"]])
+        data["authors"] = authors
+
+        jdata = json.dumps(data)
+        # print(jdata)
+
+        res = requests.patch(f"http://localhost:3000/api/v0/papers/{id}", headers=my_headers, data=jdata)
+
+        # print(res.json())
+        if res.status_code != 200 or not res.ok:
+            print(index, id, res)
+
+        time.sleep(0.6)
+
+
 if __name__ == '__main__':
     df_data = load_dataset()
 
-    # post papers
-    # transform_papers(dataset)  # got stuck after 10750 or 10751
-    # get papers (for references)
-    # df_papers = get("df_papers.csv", "papers", 1000)
+    # post_papers(df_data)  # got stuck after 10751
+    df_papers = get("df_papers.csv", "papers", 1000)
     # print(df_id)
-    # post venues
+
     # post_venues(df_data)
-    # df_venues = get("df_venues.csv", "venues", 1000)
-    # post authors
+    df_venues = get("df_venues.csv", "venues", 1000)
+
     # post_authors(df_data)
-    # get authors
-    # df_authors = get("df_authors.csv", "authors", 1000)
+    df_authors = get("df_authors.csv", "authors", 1000)
 
     # update papers
+    update_papers(df_data, df_papers, df_venues, df_authors)
