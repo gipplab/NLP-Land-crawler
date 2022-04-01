@@ -118,10 +118,10 @@ def map_name_to_id(df, col_name):
 def update_papers(df_data, df_papers, df_venues, df_authors):
     rows = df_papers.shape[0]
     df_data = df_data.iloc[0:rows].copy()
+    df_data["venue"] = df_data["venue"].fillna("unknown")
 
     # update citations
     df_data["cites"] = df_data["inCitations"].fillna(0).apply(lambda x: x if (x == 0) else len(ast.literal_eval(x)))
-    # dict_c = dict(zip(df_data["_id"], df_data["cites"]))
 
     # map venues
     df_venues = df_venues[["_id", "names"]].copy()
@@ -132,15 +132,14 @@ def update_papers(df_data, df_papers, df_venues, df_authors):
     df_authors = df_authors[["_id", "fullname"]].copy()
     df_authors["fullname"] = df_authors["fullname"].fillna('"unknown"')
     dict_a = dict(zip(df_authors["fullname"], df_authors["_id"]))
-    # print(dict_a)
 
     rows = df_papers.shape[0]
-    for paper in tqdm(df_papers.iterrows(), total=rows):  # vectorized might be faster, but we have to sleep (wait for the server) at the end, so all improvement is lost anyway
+    for paper in tqdm(df_papers.iterrows(), total=rows):  # vectorized would be faster
         index = paper[0]
         id = paper[1]["_id"]
         data = {}
 
-        # add random cites (correct amount)
+        # add random cites (wrong citations)
         cites = df_data.loc[index, "cites"]
         if int(cites) > 0:
             index_list = random.sample(range(0, rows), cites)
@@ -167,8 +166,6 @@ def update_papers(df_data, df_papers, df_venues, df_authors):
         if res.status_code != 200 or not res.ok:
             print(index, id, res)
 
-        time.sleep(0.6)
-
 
 if __name__ == '__main__':
     df_data = load_dataset()
@@ -183,5 +180,4 @@ if __name__ == '__main__':
     # post_authors(df_data)
     df_authors = get("df_authors.csv", "authors", 1000)
 
-    # update papers
     update_papers(df_data, df_papers, df_venues, df_authors)
