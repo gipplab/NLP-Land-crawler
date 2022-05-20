@@ -170,14 +170,14 @@ def update_papers(df_data, df_papers, df_venues, df_authors):
 if __name__ == '__main__':
     df_data = load_dataset()
 
-    # post_papers(df_data)  # got stuck after 10751
-    df_papers = get("df_papers.csv", "papers", 1000)
-    # print(df_id)
-
-    # post_venues(df_data)
-    df_venues = get("df_venues.csv", "venues", 1000)
-
-    # post_authors(df_data)
-    df_authors = get("df_authors.csv", "authors", 1000)
-
-    update_papers(df_data, df_papers, df_venues, df_authors)
+    transform_papers(df_data)  # got stuck after 10751
+    # df_papers = get("df_papers.csv", "papers", 1000)
+    # # print(df_id)
+    #
+    # # post_venues(df_data)
+    # df_venues = get("df_venues.csv", "venues", 1000)
+    #
+    # # post_authors(df_data)
+    # df_authors = get("df_authors.csv", "authors", 1000)
+    #
+    # update_papers(df_data, df_papers, df_venues, df_authors)
