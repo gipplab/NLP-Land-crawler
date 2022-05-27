@@ -17,7 +17,7 @@ my_headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/j
 
 
 def read_csv(filename):
-    return pd.read_csv(filename, header=0, index_col=0, dtype={"number": str})
+    return pd.read_csv(filename, header=0, index_col=0, dtype={"number": str, "absUrl": str})
 
 
 def load_dataset(path: string) -> pd.DataFrame:
@@ -116,7 +116,6 @@ def combine_table(mode, table):
         df_table = pd.DataFrame({})
         for i in range(1, 5):
             df_new = read_csv(f"d3_{table}_{mode}_{i}.csv")
-            print(df_new)
             df_table = pd.concat([df_table, df_new])
         before = df_table.shape[0]
         df_table = df_table.drop_duplicates()
@@ -139,25 +138,26 @@ def post_table(table, mode, size=1000):
 def post_papers(mode):
     # if not check_for_data("papers"):
     for i in range(1, 5):
-        start = time.time()
-        print(f"Post papers {i}/4 to the backend")
-        print(f"Loading papers {i}/4 from file")
-        df_papers = read_csv(f"d3_{mode}_edit_{i}.csv")
+        if i == 4:
+            start = time.time()
+            print(f"Post papers {i}/4 to the backend")
+            print(f"Loading papers {i}/4 from file")
+            df_papers = read_csv(f"d3_{mode}_edit_{i}.csv")
 
-        print(f"Converting fields with arrays from string to array again")
-        df_papers["pdfUrls"] = df_papers["pdfUrls"].apply(ast.literal_eval)
-        df_papers["authors"] = df_papers["authors"].apply(ast.literal_eval)
-        df_papers["fieldsOfStudy"] = df_papers["fieldsOfStudy"].apply(ast.literal_eval)
+            print(f"Converting fields with lists from string to list again")
+            df_papers["pdfUrls"] = df_papers["pdfUrls"].apply(lambda x: x if pd.isnull(x) else ast.literal_eval(x))
+            df_papers["authors"] = df_papers["authors"].apply(ast.literal_eval)
+            df_papers["fieldsOfStudy"] = df_papers["fieldsOfStudy"].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
-        print(f"Sending papers {i}/4 to backend")
-        post(df_papers, "papers", 10000)
-        print(f"This took {(time.time() - start) / 60} min")
+            print(f"Sending papers {i}/4 to backend")
+            post(df_papers, "papers", 10000)
+            print(f"This took {(time.time() - start) / 60} min")
 
 
-def get_table(route, size=1000):
-    print(f"Get {route} from the backend")
-    filename = f"d3_{route}_ids.csv"
+def get_table(route, mode, size=1000):
+    filename = f"d3_{route}_{mode}ids.csv"
     if not os.path.isfile(filename):
+        print(f"Get {route} from the backend")
         start = time.time()
         df = pd.DataFrame({})
         done = False
@@ -174,6 +174,7 @@ def get_table(route, size=1000):
         df.to_csv(filename)
         print(f"This took {(time.time() - start) / 60} min")
     else:
+        print(f"Load {route} from a file")
         df = read_csv(filename)
     return df
 
@@ -271,8 +272,13 @@ def compare_cols(df_data: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    mode = "test"
-    # mode = "full"
+    # mode = "test"
+    mode = "full"
+
+    # requirements: at least 32GB RAM; full dataset as CSV
+    # note#1: steps below are needed for preparation and have to be executed in a shell
+    # note#2: during list_authors() you might have to stop your backend
+    #   32GB RAM could be just not enough to run both ta the same time
 
     # create test dataset with
     # "head -n 15003 d3_2021_12.csv > d3_11k.csv" in terminal to create test csv
@@ -311,6 +317,7 @@ if __name__ == '__main__':
             start_part = time.time()
             # analyse_cols(df_data)
             # compare_cols(df_data)
+            print(f"Load dataset {i}/4")
             df_data = load_dataset(f"d3_{mode}_{i}.csv")
             list_venues(df_data, filename_venues)
             list_authors(df_data, filename_authors)
@@ -323,8 +330,8 @@ if __name__ == '__main__':
     combine_table(mode, "authors")
     post_table("venues", mode, 1000)
     post_table("authors", mode, 1000)
-    df_venues = get_table("venues", size=10000)
-    df_authors = get_table("authors", size=10000)
+    df_venues = get_table("venues", mode, size=10000)
+    df_authors = get_table("authors", mode, size=10000)
     print("Create dictionaries for id mappings")
     dict_venues = map_venue_name_to_id(df_venues)
     dict_orcid = map_orcid_to_id(df_authors)
@@ -337,6 +344,7 @@ if __name__ == '__main__':
 
         filename = f"d3_{mode}_edit_{i}.csv"
         if not os.path.isfile(filename):
+            print(f"Load dataset {i}/4")
             df_data = load_dataset(f"d3_{mode}_{i}.csv")
             transform_papers(df_data, filename, dict_venues, dict_authors, dict_orcid)
             del df_data
