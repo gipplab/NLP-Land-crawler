@@ -17,7 +17,7 @@ my_headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/j
 
 
 def read_csv(filename):
-    return pd.read_csv(filename, header=0, index_col=0, dtype={"number": str, "absUrl": str})
+    return pd.read_csv(filename, header=0, index_col=0, dtype={"number": str, "absUrl": str})  # TODO define dtype for all columns
 
 
 def load_dataset(path: string) -> pd.DataFrame:
@@ -109,7 +109,7 @@ def list_authors(df_data, filename):
 
 
 def combine_table(mode, table):
-    print(f"Combine {table} into a single CSV")
+    print(f"Combine {table} into single CSV")
     filename = f"d3_{table}_{mode}.csv"
     if not os.path.isfile(filename):
         start = time.time()
@@ -138,24 +138,26 @@ def post_table(table, mode, size=1000):
 def post_papers(mode):
     # if not check_for_data("papers"):
     for i in range(1, 5):
-        if i == 4:
-            start = time.time()
-            print(f"Post papers {i}/4 to the backend")
-            print(f"Loading papers {i}/4 from file")
-            df_papers = read_csv(f"d3_{mode}_edit_{i}.csv")
+        # if i == 4:
+        start = time.time()
+        print(f"Post papers {i}/4 to the backend")
+        print(f"Loading papers {i}/4 from file")
+        df_papers = read_csv(f"d3_{mode}_edit_{i}.csv")
 
-            print(f"Converting fields with lists from string to list again")
-            df_papers["pdfUrls"] = df_papers["pdfUrls"].apply(lambda x: x if pd.isnull(x) else ast.literal_eval(x))
-            df_papers["authors"] = df_papers["authors"].apply(ast.literal_eval)
-            df_papers["fieldsOfStudy"] = df_papers["fieldsOfStudy"].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
+        print(f"Converting fields with lists from string to list again")
+        df_papers["pdfUrls"] = df_papers["pdfUrls"].apply(lambda x: x if pd.isnull(x) else ast.literal_eval(x))
+        df_papers["authors"] = df_papers["authors"].apply(ast.literal_eval)
+        df_papers["fieldsOfStudy"] = df_papers["fieldsOfStudy"].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
-            print(f"Sending papers {i}/4 to backend")
-            post(df_papers, "papers", 10000)
-            print(f"This took {(time.time() - start) / 60} min")
+        print(f"Sending papers {i}/4 to backend")
+        post(df_papers, "papers", 10000)
+        print(f"This took {(time.time() - start) / 60} min")
+        del df_papers
+        gc.collect()
 
 
 def get_table(route, mode, size=1000):
-    filename = f"d3_{route}_{mode}ids.csv"
+    filename = f"d3_{route}_{mode}_ids.csv"
     if not os.path.isfile(filename):
         print(f"Get {route} from the backend")
         start = time.time()
@@ -174,7 +176,7 @@ def get_table(route, mode, size=1000):
         df.to_csv(filename)
         print(f"This took {(time.time() - start) / 60} min")
     else:
-        print(f"Load {route} from a file")
+        print(f"Load {route} from file")
         df = read_csv(filename)
     return df
 
@@ -216,7 +218,7 @@ def transform_papers(df, filename, dict_venues, dict_authors, dict_orcid):
                           "address"])
 
     # columns maybe keep
-    df = df.drop(columns=["month", "school", "ee"])
+    df = df.drop(columns=["month", "school"])
 
     df = df.rename(columns={"id": "csvId", "paperAbstract": "abstractText", "journal": "venueRaw",
                             "@key": "dblpId", "year": "yearPublished", "type": "typeOfPaper",
@@ -235,6 +237,11 @@ def transform_papers(df, filename, dict_venues, dict_authors, dict_orcid):
     # df["outCitationsRef"] = df["outCitationsRef"].fillna({i: [] for i in df.index})  # empty List
 
     # df["abstractText"] = df["abstractText"].fillna("")
+
+    print("Set access type")
+    df["openAccess"] = df["ee"].str.contains("\"@type\": \"oa\"|@type: oa", na=False)
+
+    df = df.drop(columns=["ee"])
 
     print("Set venue")
     df["venue"] = df["venueRaw"].apply(dict_venues.get)
@@ -278,7 +285,7 @@ if __name__ == '__main__':
     # requirements: at least 32GB RAM; full dataset as CSV
     # note#1: steps below are needed for preparation and have to be executed in a shell
     # note#2: during list_authors() you might have to stop your backend
-    #   32GB RAM could be just not enough to run both ta the same time
+    #   32GB RAM could be just not enough to run both at the same time
 
     # create test dataset with
     # "head -n 15003 d3_2021_12.csv > d3_11k.csv" in terminal to create test csv
@@ -336,6 +343,9 @@ if __name__ == '__main__':
     dict_venues = map_venue_name_to_id(df_venues)
     dict_orcid = map_orcid_to_id(df_authors)
     dict_authors = map_author_name_to_id(df_authors)
+    del df_venues
+    del df_authors
+    gc.collect()
 
     for i in range(1, 5):
         gc.collect()
