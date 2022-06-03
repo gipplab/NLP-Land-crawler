@@ -225,18 +225,17 @@ def transform_papers(df, filename, dict_venues, dict_authors, dict_orcid):
                             "inCitations": "inCitationsRef", "outCitations": "outCitationsRef",
                             "author": "authorsRaw"})
     print("Set urls")
-    df["absUrl"] = "https://dblp.org/" + df["url"]
-    df = df.drop(columns=["url"])
+    # df["absUrl"] = "https://dblp.org/" + df["url"]
+    # df = df.drop(columns=["url"])
 
     print("Set citations")
     df["inCitationsCount"] = df["inCitationsRef"].apply(lambda x: 0 if pd.isnull(x) else len(ast.literal_eval(x)))
     df["outCitationsCount"] = df["outCitationsRef"].apply(lambda x: 0 if pd.isnull(x) else len(ast.literal_eval(x)))
 
+    # TODO leave fields in
     df = df.drop(columns=["inCitationsRef", "outCitationsRef", "csvId"])
     # df["inCitationsRef"] = df["inCitationsRef"].fillna({i: [] for i in df.index})  # empty List
     # df["outCitationsRef"] = df["outCitationsRef"].fillna({i: [] for i in df.index})  # empty List
-
-    # df["abstractText"] = df["abstractText"].fillna("")
 
     print("Set access type")
     df["openAccess"] = df["ee"].str.contains("\"@type\": \"oa\"|@type: oa", na=False)
