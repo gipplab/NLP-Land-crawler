@@ -184,6 +184,8 @@ def get_table(route, mode, size=1000):
     else:
         log.info(f"Load {route} from file")
         df = read_csv(filename)
+        if route == "venues":
+            df["names"] = df["names"].apply(lambda x: ast.literal_eval(x))
     return df
 
 
@@ -249,7 +251,6 @@ def transform_papers(df, filename, dict_venues, dict_authors):
 
     log.info("Set authors")
     df["authors"] = df["authorsRaw"].apply(map_author)
-        # for author in df.iloc[32]["authors"]:
     df = df.drop(columns=["authorsRaw"])
 
     df.to_csv(filename)
@@ -280,8 +281,8 @@ def compare_cols(df_data: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    mode = "test"
-    # mode = "full"
+    # mode = "test"
+    mode = "full"
 
     # requirements: at least 32GB RAM; full dataset as CSV
     # note#1: steps below are needed for preparation and have to be executed in a shell
