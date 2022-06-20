@@ -4,6 +4,8 @@ import ast
 import string
 import sys
 import gc
+
+import numpy as np
 import pandas as pd
 import requests
 import json
@@ -53,10 +55,10 @@ def list_venues(df_data, filename):
     if not os.path.isfile(filename):
         start = time.time()
         df_venues = pd.DataFrame({})
-        df_venues["names"] = df_data["journal"].dropna().unique()
+        df_venues["names"] = np.concatenate((df_data["journal"].dropna().unique(), df_data["booktitle"].dropna().unique()))
         df_venues.to_csv(filename)
-        del df_venues
         log.info(f"This took {(time.time() - start) / 60} min")
+        del df_venues
     gc.collect()
 
 
@@ -89,7 +91,7 @@ def list_authors(df_data, filename):
         split = fullname.split(" ")
         if split[-1].isnumeric():
             number = split[-1]
-            fullname = " ".join(split[0: -1])
+        #     fullname = " ".join(split[0: -1])
         return pd.Series([orcid, fullname, number])
 
     log.info("Create authors list")
@@ -153,6 +155,7 @@ def post_papers(mode):
         log.info(f"Converting fields with lists from string to list again")
         df_papers["pdfUrls"] = df_papers["pdfUrls"].apply(lambda x: x if pd.isnull(x) else ast.literal_eval(x))
         df_papers["authors"] = df_papers["authors"].apply(ast.literal_eval)
+        df_papers["authorIds"] = df_papers["authorIds"].apply(ast.literal_eval)
         df_papers["fieldsOfStudy"] = df_papers["fieldsOfStudy"].apply(lambda x: [] if pd.isnull(x) else ast.literal_eval(x))
 
         log.info(f"Sending papers {i}/4 to backend")
@@ -195,19 +198,23 @@ def map_venue_name_to_id(df):
 
 
 def map_author_name_to_id(df):
-    df["name"] = df.apply(lambda row: row["fullname"] if pd.isnull(row["number"]) else f"{row['fullname']} {row['number']}", axis=1)
-    return dict(zip(df["name"], df["_id"]))
+    # df["fullname"] = df.apply(lambda row: row["fullname"] if pd.isnull(row["number"]) else f"{row['fullname']} {row['number']}", axis=1)
+    return dict(zip(df["fullname"], df["_id"]))
 
 
 def transform_papers(df, filename, dict_venues, dict_authors):
-    def map_author(author):
-        authors_raw = eval_author(author)
+    def map_author(authors_raw, ids=True):
+        authors_decoded = eval_author(authors_raw)
         authors = []
-        for author in authors_raw:
+        for author in authors_decoded:
             if isinstance(author, dict):
-                authors.append(dict_authors.get(author["#text"]))
+                name = author["#text"]
             else:
-                authors.append(dict_authors.get(author))
+                name = author
+            if ids:
+                authors.append(dict_authors.get(name))
+            else:
+                authors.append(name)
         return authors
 
     log.info("Drop and rename columns")
@@ -217,16 +224,16 @@ def transform_papers(df, filename, dict_venues, dict_authors):
 
     # sparse columns drop
     df = df.drop(columns=["pmid", "entities", "crossref", "cdrom", "cite", "note", "@publtype",
-                          "booktitle", "isbn", "series", "address", "editor", "chapter", "@cdate",
+                          "isbn", "series", "address", "editor", "chapter", "@cdate",
                           "address"])
 
     # columns maybe keep
     df = df.drop(columns=["month", "school"])
 
-    df = df.rename(columns={"id": "datasetId", "paperAbstract": "abstractText", "journal": "venueRaw",
+    df = df.rename(columns={"id": "datasetId", "paperAbstract": "abstractText", "journal": "venueRaw1",
                             "@key": "dblpId", "year": "yearPublished", "type": "typeOfPaper",
                             "inCitations": "inCitationsRef", "outCitations": "outCitationsRef",
-                            "author": "authorsRaw"})
+                            "author": "authorsRaw", "booktitle": "venueRaw2"})
     log.info("Set urls")
     # df["absUrl"] = "https://dblp.org/" + df["url"]
     # df = df.drop(columns=["url"])
@@ -246,11 +253,13 @@ def transform_papers(df, filename, dict_venues, dict_authors):
     df = df.drop(columns=["ee"])
 
     log.info("Set venue")
-    df["venue"] = df["venueRaw"].apply(dict_venues.get)
-    df = df.drop(columns=["venueRaw"])
+    df["venue"] = df["venueRaw1"].fillna(df["venueRaw2"])
+    df["venueId"] = df["venue"].apply(dict_venues.get)
+    df = df.drop(columns=["venueRaw1", "venueRaw2"])
 
     log.info("Set authors")
-    df["authors"] = df["authorsRaw"].apply(map_author)
+    df["authorIds"] = df["authorsRaw"].apply(lambda x: map_author(x, ids=True))
+    df["authors"] = df["authorsRaw"].apply(lambda x: map_author(x, ids=False))
     df = df.drop(columns=["authorsRaw"])
 
     df.to_csv(filename)
@@ -270,7 +279,22 @@ def analyse_cols(df_data: pd.DataFrame):
     log.info(f"Empty columns: {empty_cols}")
 
 
-def compare_cols(df_data: pd.DataFrame):
+def analyze_venue_cols(df_data, df_save):
+    compare = []
+    for column in ["journal", "venue", "journalName", "booktitle", "@publtype"]:
+        entries = ~df_data[column].isnull()
+        compare.append(entries)
+        log.info(f"Entries in {column}: {entries.sum()}")
+    df2 = df_data[df_data["author"].str.contains(author, regex=False, na=False)]
+    df2 = df2[["title", "journal", "venue", "journalName", "booktitle", "@publtype"]]
+    df_save = pd.concat([df_save, df2])
+    del df2
+    df = pd.DataFrame(compare).transpose()
+    log.info(df.groupby(df.columns.tolist(), as_index=False).size())
+    return df_save
+
+
+def compare_venue_cols(df_data: pd.DataFrame):
     df_data2 = df_data[["journal", "venue"]]
     subsetDataFrame2 = df_data2[df_data2['journal'] != df_data2["venue"]]
     log.info(subsetDataFrame2)
@@ -284,15 +308,16 @@ if __name__ == '__main__':
     # mode = "test"
     mode = "full"
 
-    # requirements: at least 32GB RAM; full dataset as CSV
-    # note#1: steps below are needed for preparation and have to be executed in a shell
-    # note#2: during list_authors() you might have to stop your backend
-    #   32GB RAM could be just not enough to run both at the same time
+    # analyze = True
+    analyze = False
 
-    # create test dataset with
+    # requirements: at least 32GB RAM; full dataset as CSV
+    # note: steps below are needed for preparation and have to be executed in a shell
+
+    # create test dataset using:
     # "head -n 15003 d3_2021_12.csv > d3_11k.csv" in terminal to create test csv
 
-    # split full dataset using
+    # split full dataset split using:
     # https://stackoverflow.com/questions/20721120/how-to-split-csv-files-as-per-number-of-rows-specified
     # splitCsv() {
     #     HEADER=$(head -1 $1)
@@ -306,8 +331,10 @@ if __name__ == '__main__':
     #         sed -i -e "1i$HEADER" "$i"
     #     done
     # }
+    #
+    # then rename the 4 files to "d3_full_1.csv", "d3_full_2.csv", "d3_full_3.csv", "d3_full_4.csv",
 
-    if not os.path.isfile(f"d3_1_test.csv"):
+    if not os.path.isfile(f"d3_test_1.csv"):
         df_test = load_dataset("d3_11k.csv")
         split = math.floor(len(df_test.index)/4)
         for i in range(1, 5):
@@ -316,25 +343,37 @@ if __name__ == '__main__':
 
     start = time.time()
     log.info(mode + " mode")
+
+    if analyze:
+        # author = "Bela Gipp"
+        # author = "Saif M. Mohammad"
+        author = "123"
+        df_save = pd.DataFrame({})
     for i in range(1, 5):
         gc.collect()
         log.info(f"Processing part {i}/4...")
 
         filename_venues = f"d3_venues_{mode}_{i}.csv"
         filename_authors = f"d3_authors_{mode}_{i}.csv"
-        if not os.path.isfile(filename_venues) or not os.path.isfile(filename_authors):
+        if not os.path.isfile(filename_venues) or not os.path.isfile(filename_authors) or analyze:
             start_part = time.time()
-            # analyse_cols(df_data)
-            # compare_cols(df_data)
             log.info(f"Load dataset {i}/4")
             df_data = load_dataset(f"d3_{mode}_{i}.csv")
-            list_venues(df_data, filename_venues)
-            list_authors(df_data, filename_authors)
+
+            if analyze:
+                df_save = analyze_venue_cols(df_data, df_save)
+                # analyse_cols(df_data)
+                # compare_cols(df_data)
+            else:
+                list_venues(df_data, filename_venues)
+                list_authors(df_data, filename_authors)
+            log.info(f"Part {i}/4 took {(time.time() - start_part) / 60} min")
             del df_data
 
-            log.info(f"Part {i}/4 took {(time.time()-start_part) / 60} min")
         gc.collect()
-
+    if analyze:
+        df_save.to_csv(f"{author.split(' ')[-1].lower()}.csv")
+        exit()
     combine_table(mode, "venues")
     combine_table(mode, "authors")
     post_table("venues", mode, 1000)
