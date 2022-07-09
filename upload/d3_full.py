@@ -56,6 +56,7 @@ def list_venues(df_data, filename):
         start = time.time()
         df_venues = pd.DataFrame({})
         df_venues["names"] = np.concatenate((df_data["journal"].dropna().unique(), df_data["booktitle"].dropna().unique()))
+        df_venues["names"] = df_venues["names"].str.replace(r" \(([\d])\)$", "", regex=True)
         df_venues.to_csv(filename)
         log.info(f"This took {(time.time() - start) / 60} min")
         del df_venues
@@ -254,6 +255,7 @@ def transform_papers(df, filename, dict_venues, dict_authors):
 
     log.info("Set venue")
     df["venue"] = df["venueRaw1"].fillna(df["venueRaw2"])
+    df["venue"] = df["venue"].str.replace(r" \(([\d])\)$", "", regex=True)
     df["venueId"] = df["venue"].apply(dict_venues.get)
     df = df.drop(columns=["venueRaw1", "venueRaw2"])
 
